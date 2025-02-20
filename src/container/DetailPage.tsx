@@ -8,13 +8,16 @@ import { MdIosShare } from "react-icons/md";
 import { FaRegHeart } from "react-icons/fa";
 import { HiArrowTrendingUp } from "react-icons/hi2";
 import { MdVerified } from "react-icons/md";
-
+import BottomSheet from '@/components/BottomSheet';
+import { MdOutlineQuickreply } from "react-icons/md";
+import { FaRegCalendarAlt } from "react-icons/fa";
 
 const Detail = () => {
-    const {tutorDetail, backToHome} = useDetailPage()
+    const {tutorDetail, backToHome, isBookModalOpen, setIsBookModalOpen, handleBookRightNow} = useDetailPage()
     if(!tutorDetail) return null
     const {image, flag, name, reviews, price, description, lessons, languageStacks, countryOfBirth} = tutorDetail
   return (
+    <>
     <div className="flex flex-col min-h-screen bg-gray-100">
             <div className='flex flex-row justify-between p-4'>
             <IoArrowBackOutline onClick={backToHome}/>
@@ -172,10 +175,44 @@ const Detail = () => {
         <button className=" px-4 py-2 rounded-lg w-full text-xs" style={{textDecoration: 'underline', marginBottom: 100}}>Report an issue</button>
         {/* Book Button */}
         <div className="fixed bottom-0 mt-6 flex space-x-4 p-4 w-full bg-white" style={{boxShadow: '0 -10px 20px -10px rgba(0, 0, 0, 0.1)'}}>
-          <button className=" font-semibold px-6 py-2 rounded-lg w-full" style={{border: '2px solid black', background: '#ff7aac'}} >Book tutor</button>
+          <button className=" font-semibold px-6 py-2 rounded-lg w-full" style={{border: '2px solid black', background: '#ff7aac'}} onClick={() => setIsBookModalOpen(true)}>Book tutor</button>
         </div>
       </div>
     </div>
+    <BottomSheet isOpen={isBookModalOpen} setIsOpen={() => setIsBookModalOpen(false)}>
+            <div className='flex flex-col gap-4'>
+                <div className='font-bold' style={{fontSize: 24}}>
+                    When do you want to take your trial ?
+                </div>
+                <div className='flex flex-col gap-2'>
+                <div className='flex flex-col gap-1' style={{border: '2px solid #dedde5', padding: 16, borderRadius: 5}} onClick={handleBookRightNow}>
+                    <div>
+                    <MdOutlineQuickreply size={20}/>
+                    </div>
+                    <div className='text-sm font-bold'>
+                        Right now
+                    </div>
+                    <div className='text-sm'>
+                        Book a  trial and meet your tutor right now.
+                    </div>
+                </div>
+
+                <div className='flex flex-col gap-1' style={{border: '2px solid #dedde5', padding: 16, borderRadius: 5}}>
+                    <div>
+                    <FaRegCalendarAlt size={20} />
+                    </div>
+                    <div className='text-sm font-bold'>
+                        Later
+                    </div>
+                    <div className='text-sm'>
+                        Choose a date and time that works for you
+                    </div>
+                </div>
+                </div>
+
+            </div>
+    </BottomSheet>
+    </>
   );
 };
 
