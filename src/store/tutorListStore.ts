@@ -1,7 +1,9 @@
+'use client'
 import { database } from '@/data';
+import { getUniqueNativeLanguages } from '@/utils';
 import {create} from 'zustand'
 
-interface Tutor {
+export interface Tutor {
     id: number;
     isSuperTutor?: boolean;
     image: string;
@@ -15,7 +17,11 @@ interface Tutor {
     students: string;
     lessons: string;
     languages: string;
-    languageStacks: { [key: string]: string }[];
+    languageStacks: { 
+        level: string;
+        language: string;
+    }[];
+    countryOfBirth: string;
 }
 
 interface Isort {
@@ -24,15 +30,18 @@ interface Isort {
 }
 
 interface ITutorState {
-    tutors?: any;
+    tutors?: Tutor[];
     isLoading?: boolean;
     getList: () => Promise<void>;
     currentFilters: {[key:string]: boolean}
     setFilter: (filter: string) => void;
     languages: string[];
     currentLanguage: string;
+    setCurrentLanguage: (language: string) => void
     sort: Isort;
     setSort: (sort: Isort) => void;
+    availableLanguages: string[];
+    setAvailableLanguages: (languages: string[]) => void
   }
 
   export const useTutorStore = create<ITutorState>()((set, get) => ({
@@ -43,7 +52,16 @@ interface ITutorState {
         // Filter by multiple filters
         const currentFilters = get().currentFilters;
         const currentSort = get().sort;
+        const currentLanguage = get().currentLanguage;
         let data: Tutor[] = [...database]
+
+        const uniqueNativeLanguages = getUniqueNativeLanguages(database)
+        set({availableLanguages: uniqueNativeLanguages})
+
+        if(currentLanguage !== 'All'){
+            data = data.filter((tutor) => tutor.languageStacks.some((language) => language.level === 'Native' && language.language === currentLanguage))
+        }
+
         if (currentFilters && Object.keys(currentFilters).length > 0) {
             Object.keys(currentFilters).forEach((filter) => {
                 if(currentFilters[filter] === false) return;
@@ -68,10 +86,8 @@ interface ITutorState {
         if (currentSort) {
             data = [...data].sort((a, b) => {
                 switch(currentSort.field){
-                    case 'price-lowest':
-                        return  Number(a.price.replace('$', '')) - Number(b.price.replace('$', ''));
-                    case 'price-highest':
-                        return Number(b.price.replace('$', '')) - Number(a.price.replace('$', ''));
+                    case 'price':
+                        return currentSort.type === "asc" ? Number(a.price.replace('$', '')) - Number(b.price.replace('$', '')) : Number(b.price.replace('$', '')) - Number(a.price.replace('$', '')); 
                     case 'rating':
                         return currentSort.type === "asc" ? Number(a.rating) - Number(b.rating) : Number(b.rating) - Number(a.rating);
                     case 'reviews':
@@ -101,11 +117,18 @@ interface ITutorState {
     },
     languages: [],
     currentLanguage: 'All',
+    setCurrentLanguage(language) {
+        set({currentLanguage: language})
+    },
     sort: {
         type: 'asc',
-        field: 'price-lowest'
+        field: 'price'
     },
     setSort: (sort: Isort) => {
         set({sort})
-    }
+    },
+    availableLanguages: [],
+    setAvailableLanguages(languages) {
+        set({availableLanguages: languages})
+    },
   }));

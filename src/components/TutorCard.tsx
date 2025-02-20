@@ -1,11 +1,14 @@
 'use client'
+import { Tutor } from "@/store/tutorListStore";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { IoPerson } from "react-icons/io5";
 import { MdVerifiedUser } from "react-icons/md";
 
-const TutorCard = ({ image, name, flag, rating, reviews, price, lessonDuration, description, students, lessons, languages, isSuperTutor }:any) => {
+const TutorCard = ({ image, name, flag, rating, reviews, price, lessonDuration, description, students, lessons, languages, isSuperTutor, id }:Tutor) => {
+    const {push} = useRouter()
     return (
-      <div className="flex flex-col bg-white p-4 shadow-md">
+      <div className="flex flex-col bg-white p-4 shadow-md" onClick={() => push(`/detail/${String(id)}`)}>
         <div className="flex flex-col justify-center">
             <div className="flex flex-row gap-4">
                 <div>

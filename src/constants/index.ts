@@ -37,12 +37,8 @@ export const filters = [{
 }]
 
 export const sortOptions = [{
-    id: 'price-lowest',
-    label: 'Price: lowest first',
-},
-{
-    id: 'price-highest',
-    label: 'Price: highest first',
+    id: 'price',
+    label: 'Price',
 },
 {
     id: 'rating',
@@ -56,3 +52,16 @@ export const sortOptions = [{
     id: 'popularity',
     label: 'Popularity',
 }]
+
+export const flagMap: {[key: string]: string} = {
+    "French": "fr",
+    "Spanish": "es",
+    "German": "de",
+    "Italian": "it",
+    "Japanese": "jp",
+    "Mandarin": "cn",
+    "Russian": "ru",
+    "Portuguese": "br",
+    "Korean": "kr",
+    "Hindi": "in"
+  }

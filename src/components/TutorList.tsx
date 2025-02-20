@@ -1,22 +1,10 @@
 'use client'
+import { Tutor } from "@/store/tutorListStore";
 import TutorCard from "./TutorCard";
 
-type TutorProfile = {
-    image: string;
-    name: string;
-    flag: string;
-    rating: string;
-    reviews: string;
-    price: string;
-    lessonDuration: string;
-    description: string;
-    students: string;
-    lessons: string;
-    languages: string;
-  };
   
 type TutorListProps = {
-    tutors: TutorProfile[];
+    tutors: Tutor[];
 };
 
 const TutorList = ({tutors = []}: TutorListProps) => {

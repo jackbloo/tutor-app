@@ -13,6 +13,7 @@ export const database = [
       "students": "40",
       "lessons": "12500",
       "languages": "Speaks French (Native), English (Fluent)",
+      "countryOfBirth": "French",
       "languageStacks": [{
         "language": "French",
         "level": "Native"
@@ -25,6 +26,7 @@ export const database = [
     {
       "id": 2,
       "image": "https://ui-avatars.com/api/?name=James+B&background=random",
+      "countryOfBirth": "Spain",
       "name": "James B.",
       "flag": "es",
       "rating": "4.7",
@@ -46,6 +48,7 @@ export const database = [
     {
         "id": 3,
       "image": "https://ui-avatars.com/api/?name=Maria+L&background=random",
+      "countryOfBirth": "Germany",
       "name": "Maria L.",
       "flag": "de",
       "rating": "5.0",
@@ -68,6 +71,7 @@ export const database = [
         "id": 4,
       "image": "https://ui-avatars.com/api/?name=Daniel+K&background=random",
       "name": "Daniel K.",
+      "countryOfBirth": "Italy",
       "flag": "it",
       "rating": "4.6",
       "reviews": "135",
@@ -95,6 +99,7 @@ export const database = [
       "price": "$35",
       "lessonDuration": "55-min lesson",
       "description": "Japanese tutor with a structured and effective teaching method.",
+      "countryOfBirth": "Japan",
       "students": "45",
       "lessons": "12000",
       "languages": "Speaks Japanese (Native), English (Intermediate)",
@@ -125,11 +130,13 @@ export const database = [
       },{
         "language": "English",
         "level": "Fluent"
-      }]
+      }],
+      "countryOfBirth": "China",
     },
     {
       "id": 7,
       "image": "https://ui-avatars.com/api/?name=Emma+G&background=random",
+      "countryOfBirth": "Russia",
       "name": "Emma G.",
       "flag": "ru",
       "rating": "4.7",
@@ -152,6 +159,7 @@ export const database = [
         "id": 8,
       "image": "https://ui-avatars.com/api/?name=David+P&background=random",
       "name": "David P.",
+      "countryOfBirth": "Portugal",
       "flag": "br",
       "rating": "4.9",
       "reviews": "220",
@@ -174,6 +182,7 @@ export const database = [
       "id": 9,
       "image": "https://ui-avatars.com/api/?name=Sophia+M&background=random",
       "name": "Sophia M.",
+      "countryOfBirth": "Korea",
       "flag": "kr",
       "rating": "5.0",
       "reviews": "240",
@@ -195,6 +204,7 @@ export const database = [
       "id": 10,
       "image": "https://ui-avatars.com/api/?name=William+C&background=random",
       "name": "William C.",
+      "countryOfBirth": "Hindi",
       "flag": "in",
       "rating": "4.8",
       "reviews": "195",

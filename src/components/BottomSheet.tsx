@@ -9,7 +9,7 @@ type BottomSheetProps = {
 }
 
 export default function BottomSheet({isOpen, setIsOpen, children}:PropsWithChildren<BottomSheetProps> ) {
-
+  if(!isOpen) return false
   return (
     <div className="fixed inset-0 flex items-end justify-center">
       {/* Overlay */}
@@ -29,7 +29,7 @@ export default function BottomSheet({isOpen, setIsOpen, children}:PropsWithChild
         className="fixed bottom-0 w-full max-w-md bg-white p-5 rounded-t-2xl shadow-lg"
       >
         <div className="w-full flex justify-end">
-        <IoMdClose />
+        <IoMdClose onClick={() => setIsOpen(false)} />
         </div>
        {children}
       </motion.div>

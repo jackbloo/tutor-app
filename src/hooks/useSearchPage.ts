@@ -5,15 +5,19 @@ import { useEffect, useRef, useState } from "react";
 
 export default function useSearchPage(){
         const [isVisible, setIsVisible] = useState(false);
+        const [isSortModalOpen, setIsSortModalOpen] = useState(false);
+        const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
         const getTutors = useTutorStore((state) => state.getList);
         const tutors = useTutorStore((state) => state.tutors || []);
         const isLoading = useTutorStore((state) => state.isLoading);
         const currentFilters = useTutorStore((state) => state.currentFilters);
         const setFilter = useTutorStore((state) => state.setFilter);
         const currentLanguage = useTutorStore((state) => state.currentLanguage);
+        const setCurrentLanguage = useTutorStore((state) => state.setCurrentLanguage);
         const titleRef = useRef<HTMLDivElement | null>(null);
         const sort = useTutorStore((state) => state.sort);
         const setSort = useTutorStore((state) => state.setSort);
+        const availableLanguages = useTutorStore((state) => state.availableLanguages)
       
         useEffect(() => {
           const observer = new IntersectionObserver(
@@ -36,6 +40,6 @@ export default function useSearchPage(){
             getTutors();
         },[currentFilters, currentLanguage, sort.field, sort.type])
 
-        return {isVisible, tutors, isLoading, titleRef, currentFilters, setFilter, currentLanguage, sort, setSort}
+        return {isVisible, tutors, isLoading, titleRef, currentFilters, setFilter, currentLanguage, sort, setSort, setIsSortModalOpen, isSortModalOpen, availableLanguages, setCurrentLanguage, isLanguageModalOpen, setIsLanguageModalOpen}
 
 } 
