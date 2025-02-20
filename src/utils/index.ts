@@ -9,8 +9,8 @@ export const getUniqueNativeLanguages = (database: Tutor[]) => {
     ))];
   };
   
- export function generateBookingTimes(): Record<string, { '25': Record<string, {}>, '50': Record<string, {}> }> {
-      const bookingTimes: Record<string, { '25': Record<string, {}>, '50': Record<string, {}> }> = {};
+ export function generateBookingTimes(): Record<string, { '25': Record<string, unknown>, '50': Record<string, unknown> }> {
+      const bookingTimes: Record<string, { '25': Record<string, unknown>, '50': Record<string, unknown> }> = {};
       const today: Date = new Date();
       const startOfWeek: Date = new Date(today.setDate(today.getDate() - today.getDay()));
       
@@ -32,7 +32,7 @@ export const getUniqueNativeLanguages = (database: Tutor[]) => {
           bookingTimes[isoDate] = { '25': {}, '50': {} };
           
           for (let hour = 7; hour < 19; hour++) {
-              for (let minute of [0, 30]) {
+              for (const minute of [0, 30]) {
                   const time: Date = new Date(currentDate);
                   time.setHours(hour, minute, 0, 0);
                   bookingTimes[isoDate]['25'][time.toISOString()] = true;
@@ -49,7 +49,7 @@ export const getUniqueNativeLanguages = (database: Tutor[]) => {
       return bookingTimes;
   }
   
-  export function findClosestBooking(bookingTimes: Record<string, { '25': Record<string, {}>, '50': Record<string, {}> }>): {
+  export function findClosestBooking(bookingTimes: Record<string, { '25': Record<string,unknown>, '50': Record<string, unknown> }>): {
     time: string | null;
     category: string | null;
   } | null {
@@ -89,7 +89,7 @@ export const getUniqueNativeLanguages = (database: Tutor[]) => {
         if(!data) return null
         const parsedData = await JSON.parse(data)
         return parsedData
-    } catch (error) {
+    } catch {
         return null
     }
   }
@@ -101,7 +101,7 @@ export const getUniqueNativeLanguages = (database: Tutor[]) => {
         const parsedData = await JSON.parse(data)
         await localStorage.removeItem('confirmation')
         return parsedData
-    } catch (error) {
+    } catch {
         return null
     }
   }

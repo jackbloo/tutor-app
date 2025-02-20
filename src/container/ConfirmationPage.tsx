@@ -10,7 +10,7 @@ const ConfirmationPage = () => {
     <div className="bg-pink-500 text-white flex flex-col justify-between items-center min-h-screen" style={{background: '#ff7aac', padding: 16}}>
       <div className="text-center">
         <h1 className="font-bold mb-4" style={{fontSize: 32}}>
-          We'll tell {data?.name} you're ready to start!
+          We&apos;ll tell {data?.name} you&apos;re ready to start!
         </h1>
         <p className="text-lg mb-6">
           Your first lesson is {currentDate}.

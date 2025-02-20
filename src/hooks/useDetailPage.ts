@@ -24,7 +24,12 @@ export default function useDetailPage(){
         const closestTime = findClosestBooking(bookingTimes)
         if(!closestTime?.time || !closestTime?.category) return
         const data = await localStorage.getItem('booking')
-        let latestData: { [key: string]: any } = {}
+        let latestData: { [key: string]: {
+            name?:string;
+            countryOfBirth?: string;
+            image?: string;
+            duration?: string;
+        } } = {}
         if(!data){
             if(!latestData[closestTime?.time as string]){
                 latestData[closestTime?.time] = {}
@@ -58,7 +63,7 @@ export default function useDetailPage(){
         await localStorage.setItem('bookings', stringifiedData)
         await localStorage.setItem('confirmation', confirmationData)
         push('/confirmation')
-        } catch (error) {
+        } catch {
         return
         }
 
