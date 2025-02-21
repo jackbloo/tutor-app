@@ -57,7 +57,7 @@ export default function useDetailPage(){
         await localStorage.setItem('bookings', stringifiedData)
         await localStorage.setItem('confirmation', confirmationData)
         push('/confirmation')
-        } catch(error) {
+        } catch {
         toast.error('Error when trying to submit the data, please try again')
         return
         }
