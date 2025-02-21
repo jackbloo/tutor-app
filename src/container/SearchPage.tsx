@@ -24,7 +24,7 @@ const SearchPage = () => {
             {currentLanguage}
             <BiSolidDownArrow size={10} />
             </div>
-        <div className="w-full" style={{position: isVisible || isLoading ? 'relative':'fixed' , top: 0, background: 'white'}}>
+        <div className="w-full" style={{position: isVisible || isLoading || tutors?.length < 3 ? 'relative':'fixed' , top: 0, background: 'white'}}>
             <div className="flex flex-col gap-4" style={{padding: '16px 16px'}}>
             <div className="flex flex-row gap-4">
                 {

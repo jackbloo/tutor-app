@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
 
 
 const poppins = Poppins({
@@ -27,6 +28,7 @@ export default function RootLayout({
         <div className="w-full">
           <div className="relative max-w-[500px] h-screen">
           {children}
+          <Toaster position="bottom-center"/>
           </div>
         </div>
       </body>

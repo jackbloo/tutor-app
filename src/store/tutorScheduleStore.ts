@@ -1,6 +1,7 @@
 'use client'
 import { ScheduleData } from '@/types';
 import { processScheduleData } from '@/utils';
+import toast from 'react-hot-toast';
 import {create} from 'zustand'
 
 
@@ -26,6 +27,7 @@ interface ITutorScheduleState {
           set({ isLoading: false})
         } catch(error) {
           set({ isLoading: false})
+          toast.error('Error when getting the data, please try again')
           return error
         }
     },

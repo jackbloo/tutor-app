@@ -4,6 +4,7 @@ import { UserBookings } from '@/types';
 import { filterAvailableBookings, generateBookingTimes } from '@/utils';
 import {create} from 'zustand'
 import { Tutor } from './tutorListStore';
+import toast from 'react-hot-toast';
 
 
 interface ITutorBookingState {
@@ -41,6 +42,7 @@ interface ITutorBookingState {
           set({ isLoading: false})
         } catch(error) {
           set({ isLoading: false})
+          toast.error('Error when getting the data, please try again')
           return error
         }
     },

@@ -5,6 +5,7 @@ import { UserBookings } from "@/types"
 import { checkIsOverlapping, isTimeBeforeNow } from "@/utils"
 import { useRouter, useParams } from "next/navigation"
 import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 
 
 
@@ -29,7 +30,7 @@ export default function useBookingPage(){
 
     const handleBookTutor = async () => {
         try {
-        if(!chosenDate || isTimeBeforeNow(chosenDate)) return
+        if(!chosenDate || isTimeBeforeNow(chosenDate)) return toast.error('Please kindly choose one date to book')
 
         const data = await localStorage.getItem('bookings')
         let latestData: UserBookings = {}
@@ -54,7 +55,7 @@ export default function useBookingPage(){
                             })
 
             if(isOverlapping){
-                return
+                return toast.error('The time chosen is overlapping with the existing schedule, Please kindly choose another schedule')
             }
             latestData = {
                 ...response,
@@ -70,7 +71,7 @@ export default function useBookingPage(){
         await localStorage.setItem('confirmation', confirmationData)
         push('/confirmation')
         } catch(error) {
-        return error
+        return toast.error('Error when trying to submit the data, please try again')
         }
 
     

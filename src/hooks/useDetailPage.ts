@@ -4,6 +4,7 @@ import { useParams, useRouter }  from "next/navigation";
 import { useTutorDetailStore } from "@/store/tutorDetailStore";
 import { filterAvailableBookings, findClosestBooking, generateBookingTimes } from "@/utils";
 import { TimeSlotData, UserBookings } from "@/types";
+import toast from "react-hot-toast";
 
 
 export default function useDetailPage(){
@@ -26,7 +27,7 @@ export default function useDetailPage(){
         const currentBookingTime = JSON.parse(data || '{}')
         const availableBookings: Record<string, Record<string, Record<string, boolean>>> | TimeSlotData = filterAvailableBookings(bookingTimes, currentBookingTime, true)
         const closestTime = findClosestBooking(availableBookings as Record<string, { '25': Record<string, unknown>; '50': Record<string, unknown>; }> )
-        if(!closestTime?.time || !closestTime?.category || !tutorDetail) return
+        if(!closestTime?.time || !closestTime?.category || !tutorDetail) return toast.error('No tutor data is found')
         let latestData: UserBookings = {};
         const userNative = tutorDetail?.languageStacks?.find((el) => el.level === 'Native')?.language || ''
         const userData = {
@@ -57,7 +58,7 @@ export default function useDetailPage(){
         await localStorage.setItem('confirmation', confirmationData)
         push('/confirmation')
         } catch(error) {
-            console.log(error, 'error')
+        toast.error('Error when trying to submit the data, please try again')
         return
         }
 
