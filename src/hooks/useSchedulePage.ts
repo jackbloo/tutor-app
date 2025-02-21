@@ -13,7 +13,7 @@ export default function useSchedulePage(){
     const scheduleData = useTutorScheduleStore((store) => store.scheduleData)
     const isLoading = useTutorScheduleStore((store) => store.isLoading)
 
-    const isTomorrowEmpty = !scheduleData || Boolean(scheduleData && Object.keys(scheduleData['tomorrow'])?.length < 1)
+    const isTomorrowEmpty = !scheduleData || Boolean(scheduleData && Object.keys(scheduleData['earliest'])?.length < 1)
     const isPastEmpty =  !scheduleData || Boolean(scheduleData && Object.keys(scheduleData['past'])?.length < 1)
     const isUpcomingEmpty =  !scheduleData || Boolean(scheduleData && Object.keys(scheduleData['upcoming'])?.length < 1)
     useEffect(() => {

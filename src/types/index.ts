@@ -23,5 +23,5 @@ export type UserBookings = Record<string, Booking>
 export type ScheduleData = {
     upcoming: Record<string, Booking>;
     past: Record<string, Booking>;
-    tomorrow: Record<string, Booking>;
+    earliest: Record<string, Booking>;
 };

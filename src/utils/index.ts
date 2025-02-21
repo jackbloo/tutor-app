@@ -104,10 +104,10 @@ export const getUniqueNativeLanguages = (database: Tutor[]) => {
     }
   }
   
-  export const formatDateWithDuration = (isoString: string, durationMinutes: number, shortMonth?: boolean) => {
+  export const formatDateWithDuration = (isoString: string, durationMinutes: number) => {
     const date = new Date(isoString);
     
-    const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: shortMonth? 'short' : 'long', day: 'numeric' };
+    const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const formattedDate = date.toLocaleDateString('en-US', options);
     
 
@@ -369,41 +369,36 @@ export const isTimeBeforeNow = (dateString: string): boolean => {
 }
 
 
-
-
 export const processScheduleData = (data: UserBookings): ScheduleData => {
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
 
     const upcoming: UserBookings = {};
     const past: UserBookings = {};
-    const tomorrowBookings: UserBookings = {};
+    const earliestBooking: UserBookings = {};
 
-    let earliestTomorrow: string | null = null;
+    let earliest: string | null = null;
 
     for (const [isoDate, booking] of Object.entries(data)) {
         const bookingDate = new Date(isoDate);
-        const isTomorrow = bookingDate >= tomorrow && bookingDate < new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate() + 1);
 
         if (bookingDate < now) {
             past[isoDate] = booking;
         } else {
             upcoming[isoDate] = booking;
-            if (isTomorrow && (!earliestTomorrow || bookingDate < new Date(earliestTomorrow))) {
-                earliestTomorrow = isoDate;
+            if (!earliest || bookingDate < new Date(earliest)) {
+                earliest = isoDate;
             }
         }
     }
 
-    // If there's an earliest tomorrow booking, add it to tomorrowBookings and remove from upcoming
-    if (earliestTomorrow) {
-        tomorrowBookings[earliestTomorrow] = data[earliestTomorrow];
-        // Remove from upcoming
-        if(upcoming[earliestTomorrow]){
-            delete upcoming[earliestTomorrow]; 
+    // If there's an earliest booking, add it to earliestBooking and remove from upcoming
+    if (earliest) {
+        earliestBooking[earliest] = data[earliest];
+        if(upcoming[earliest]){
+            // Remove from upcoming
+            delete upcoming[earliest]; 
         }
+
     }
 
     // Sort past and upcoming
@@ -421,7 +416,7 @@ export const processScheduleData = (data: UserBookings): ScheduleData => {
             return acc;
         }, {} as UserBookings);
 
-    return { upcoming: sortedUpcoming, past: sortedPast, tomorrow: tomorrowBookings };
+    return { upcoming: sortedUpcoming, past: sortedPast, earliest: earliestBooking };
 };
 
 
@@ -435,3 +430,42 @@ export const formatIsoToWeekdayTime = (isoDate: string): string => {
     const time = date.toLocaleString("en-US", timeOptions);
     return `${weekday} at ${time}`
 }
+
+
+export const checkIsTomorrow = (isoString: string) => {
+    const date = new Date(isoString);
+    const now = new Date();
+
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    return date >= tomorrow && date < new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate() + 1);
+}
+
+
+export const formatDateWithDuration12h = (isoString: string, durationMinutes: number) => {
+    const date = new Date(isoString);
+
+    const options: Intl.DateTimeFormatOptions = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+    };
+    const formattedDate = date.toLocaleDateString('en-US', options);
+
+    const formatTo12Hour = (date: Date) => {
+        let hours = date.getHours();
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12; // Convert to 12-hour format
+        return `${hours}:${minutes} ${ampm}`;
+    };
+
+    const startTime = formatTo12Hour(date);
+    const endTime = formatTo12Hour(new Date(date.getTime() + durationMinutes * 60000));
+
+    return `${formattedDate}, ${startTime} - ${endTime}`;
+};
