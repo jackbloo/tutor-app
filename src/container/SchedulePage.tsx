@@ -40,7 +40,7 @@ const SchedulePage = () => {
         }
 
       {
-        isUpcomingEmpty && isPastEmpty && !isLoading && (
+        isUpcomingEmpty && isPastEmpty && isTomorrowEmpty && !isLoading && (
             <ScheduleEmpty handleToHome={handleToHome}/>
         )
       }
