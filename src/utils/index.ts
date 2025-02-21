@@ -385,40 +385,45 @@ export const processScheduleData = (data: UserBookings): ScheduleData => {
 
     for (const [isoDate, booking] of Object.entries(data)) {
         const bookingDate = new Date(isoDate);
-        const isTomorrow = bookingDate >= tomorrow && bookingDate < new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate() + 1)
+        const isTomorrow = bookingDate >= tomorrow && bookingDate < new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate() + 1);
 
         if (bookingDate < now) {
             past[isoDate] = booking;
         } else {
             upcoming[isoDate] = booking;
-            if(isTomorrow && (!earliestTomorrow || bookingDate < new Date(earliestTomorrow))){
-                    earliestTomorrow = isoDate;
+            if (isTomorrow && (!earliestTomorrow || bookingDate < new Date(earliestTomorrow))) {
+                earliestTomorrow = isoDate;
             }
-
-        } 
-
+        }
     }
 
+    // If there's an earliest tomorrow booking, add it to tomorrowBookings and remove from upcoming
     if (earliestTomorrow) {
         tomorrowBookings[earliestTomorrow] = data[earliestTomorrow];
+        // Remove from upcoming
+        if(upcoming[earliestTomorrow]){
+            delete upcoming[earliestTomorrow]; 
+        }
     }
 
+    // Sort past and upcoming
     const sortedUpcoming = Object.keys(upcoming)
-    .sort()
-    .reduce((acc: UserBookings, key) => {
-        acc[key] = upcoming[key];
-        return acc;
-    }, {} as UserBookings);
+        .sort()
+        .reduce((acc: UserBookings, key) => {
+            acc[key] = upcoming[key];
+            return acc;
+        }, {} as UserBookings);
 
     const sortedPast = Object.keys(past)
-    .sort()
-    .reduce((acc: UserBookings, key) => {
-        acc[key] = past[key];
-        return acc;
-    }, {} as UserBookings);
+        .sort()
+        .reduce((acc: UserBookings, key) => {
+            acc[key] = past[key];
+            return acc;
+        }, {} as UserBookings);
 
     return { upcoming: sortedUpcoming, past: sortedPast, tomorrow: tomorrowBookings };
-}
+};
+
 
 
 export const formatIsoToWeekdayTime = (isoDate: string): string => {
