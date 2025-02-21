@@ -1,6 +1,6 @@
 'use client'
 import { Tutor } from "@/store/tutorListStore";
-import { BookingTimes, TimeSlotData, UserBookings } from "@/types";
+import { BookingTimes, ScheduleData, TimeSlotData, UserBookings } from "@/types";
 
 export const getUniqueNativeLanguages = (database: Tutor[]) => {
     return [...new Set(database.flatMap((tutor) => 
@@ -13,23 +13,24 @@ export const getUniqueNativeLanguages = (database: Tutor[]) => {
   export const generateBookingTimes = (): Record<string, { '25': Record<string, unknown>, '50': Record<string, unknown> }> => {
     const bookingTimes: Record<string, { '25': Record<string, unknown>, '50': Record<string, unknown> }> = {};
     const today: Date = new Date();
-    const startOfWeek: Date = new Date(today.setDate(today.getDate() - today.getDay()));
+    const startOfWeek: Date = new Date(today.setDate(today.getDate() - today.getDay() + 1));
 
+    
     for (let i = 0; i < 7; i++) {
         const currentDate: Date = new Date(startOfWeek);
         currentDate.setDate(startOfWeek.getDate() + i);
         const isoDate: string = currentDate.toISOString().split('T')[0];
         
         const dayOfWeek = currentDate.getDay();
-        // Exclude weekends (Sunday = 0, Saturday = 6)
-        if (dayOfWeek === 0 || dayOfWeek === 6) { 
+        // Exclude saturday (saturday is index 6)
+        if (dayOfWeek === 6) { 
             continue;
         }
 
         bookingTimes[isoDate] = { '25': {}, '50': {} };
         
         for (let hour = 7; hour < 19; hour++) {
-            for (let minute of [0, 30]) {
+            for (const minute of [0, 30]) {
                 const time: Date = new Date(currentDate);
                 time.setHours(hour, minute, 0, 0);
                 bookingTimes[isoDate]['25'][time.toISOString()] = true;
@@ -42,7 +43,6 @@ export const getUniqueNativeLanguages = (database: Tutor[]) => {
             bookingTimes[isoDate]['50'][time.toISOString()] = true;
         }
     }
-    
     return bookingTimes;
 }
 
@@ -104,10 +104,10 @@ export const getUniqueNativeLanguages = (database: Tutor[]) => {
     }
   }
   
-  export const formatDateWithDuration = (isoString: string, durationMinutes: number) => {
+  export const formatDateWithDuration = (isoString: string, durationMinutes: number, shortMonth?: boolean) => {
     const date = new Date(isoString);
     
-    const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: shortMonth? 'short' : 'long', day: 'numeric' };
     const formattedDate = date.toLocaleDateString('en-US', options);
     
 
@@ -126,14 +126,14 @@ export const getUniqueNativeLanguages = (database: Tutor[]) => {
 
 
 
-const handleTimeSlots = (data: any): TimeSlotData => {
+const handleTimeSlots = (data: Record<string, Record<string, Record<string, boolean>>>): TimeSlotData => {
   const result: TimeSlotData = {};
 
   for (const date in data) {
       result[date] = {};
 
-      for (const duration in data[date]) {
-          const timeSlots = Object.keys(data[date][duration]);
+      for (const duration in data[date] as Record<string, unknown>) {
+          const timeSlots = Object.keys(data[date][duration] as Record<string, unknown>);
           const categorized = {
               morning: [] as string[],
               afternoon: [] as string[],
@@ -160,10 +160,11 @@ const handleTimeSlots = (data: any): TimeSlotData => {
 
 export function filterAvailableBookings(
     bookingTimes: BookingTimes,
-    userBookings: UserBookings
+    userBookings: UserBookings,
+    isDetailPage?: boolean
 ) {
     const now = new Date(); 
-    const availableBookings: Record<string, { '25': Record<string, unknown>; '50': Record<string, unknown>; }> = {} as Record<string, { '25': Record<string, unknown>; '50': Record<string, unknown>; }>;
+    const availableBookings: Record<string, Record<string, Record<string, boolean>>> = {};
 
     for (const date in bookingTimes) {
         const parsedDate = new Date(date);
@@ -183,9 +184,9 @@ export function filterAvailableBookings(
                 if (bookingTime < now) continue;
 
                 // Check if the current time is already booked
-                const isOverlapping = Object.values(userBookings).some(userBooking => {
-                    const userBookingTime = new Date(userBooking as any);
-                    const userBookingEndTime = new Date(userBookingTime.getTime() + userBooking.duration * 60000);
+                const isOverlapping = Object.keys(userBookings).some(userBooking => {
+                    const userBookingTime = new Date(userBooking);
+                    const userBookingEndTime = new Date(userBookingTime.getTime() + Number(userBookings[userBooking].duration) * 60000);
 
                     return bookingTime >= userBookingTime && bookingTime < userBookingEndTime;
                 });
@@ -207,23 +208,23 @@ export function filterAvailableBookings(
         }
     }
     const filteredTimeBookings = filterAvailableTimes(availableBookings)
-    return filteredTimeBookings;
+    return isDetailPage ? availableBookings : filteredTimeBookings;
 }
 
-function filterAvailableTimes(bookingTimes: Record<string, any>) {
+function filterAvailableTimes(bookingTimes: Record<string, Record<string, Record<string, boolean>>>) {
   const now = new Date();
   const currentDate = now.toISOString().split('T')[0];
   const currentTime = now.getTime();
 
-  const filteredTimes: Record<string, any> = {};
+  const filteredTimes: Record<string, Record<string, Record<string, boolean>>> = {};
 
   Object.entries(bookingTimes).forEach(([date, durations]) => {
       if (date < currentDate) return; // Skip past dates
 
       filteredTimes[date] = {};
 
-      Object.entries(durations).forEach(([duration, times]) => {
-          const validTimes = Object.keys(times as any).reduce((acc: Record<string, boolean>, time) => {
+      Object.entries(durations as Record<string, unknown>).forEach(([duration, times]) => {
+          const validTimes = Object.keys(times as Record<string, boolean>).reduce((acc: Record<string, boolean>, time) => {
               const slotTime = new Date(time).getTime();
               if (date > currentDate || slotTime >= currentTime) {
                   acc[time] = true;
@@ -232,7 +233,7 @@ function filterAvailableTimes(bookingTimes: Record<string, any>) {
           }, {});
 
           if (Object.keys(validTimes).length > 0) {
-              filteredTimes[date][duration] = validTimes;
+              (filteredTimes[date] as Record<string, Record<string, boolean>>)[duration] = validTimes;
           }
       });
   });
@@ -243,8 +244,8 @@ function filterAvailableTimes(bookingTimes: Record<string, any>) {
 
 export const formatTo12HourTime = (isoString: string) => {
     const date = new Date(isoString);
-    let hours = date.getUTCHours();
-    const minutes = date.getUTCMinutes();
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
     const amPm = hours >= 12 ? "PM" : "AM";
     // Convert 0 to 12 for AM/PM format
     hours = hours % 12 || 12; 
@@ -335,4 +336,97 @@ export const checkIsBeforeToday = (isoString: string) => {
 export const capitalizeFirstLetter =(str: string)=> {
     if (!str) return str; 
     return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+
+export const checkIsOverlapping = (newBooking: UserBookings, currentBookings: UserBookings): boolean => {
+    for (const newTime in newBooking) {
+        const newDuration = parseInt(newBooking[newTime].duration, 10);
+        const newStart = new Date(newTime).getTime();
+        // Convert duration to milliseconds
+        const newEnd = newStart + newDuration * 60 * 1000; 
+
+        for (const bookedTime in currentBookings) {
+            const bookedDuration = parseInt(currentBookings[bookedTime].duration, 10);
+            const bookedStart = new Date(bookedTime).getTime();
+            const bookedEnd = bookedStart + bookedDuration * 60 * 1000;
+
+            // Check for overlap
+            if (newStart < bookedEnd && newEnd > bookedStart) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+export const isTimeBeforeNow = (dateString: string): boolean => {
+    if(!dateString) return true
+    const givenDate = new Date(dateString);
+    const now = new Date();
+
+    return givenDate < now;
+}
+
+
+
+
+export const processScheduleData = (data: UserBookings): ScheduleData => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const upcoming: UserBookings = {};
+    const past: UserBookings = {};
+    const tomorrowBookings: UserBookings = {};
+
+    let earliestTomorrow: string | null = null;
+
+    for (const [isoDate, booking] of Object.entries(data)) {
+        const bookingDate = new Date(isoDate);
+        const isTomorrow = bookingDate >= tomorrow && bookingDate < new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate() + 1)
+
+        if (bookingDate < now) {
+            past[isoDate] = booking;
+        } else {
+            upcoming[isoDate] = booking;
+            if(isTomorrow && (!earliestTomorrow || bookingDate < new Date(earliestTomorrow))){
+                    earliestTomorrow = isoDate;
+            }
+
+        } 
+
+    }
+
+    if (earliestTomorrow) {
+        tomorrowBookings[earliestTomorrow] = data[earliestTomorrow];
+    }
+
+    const sortedUpcoming = Object.keys(upcoming)
+    .sort()
+    .reduce((acc: UserBookings, key) => {
+        acc[key] = upcoming[key];
+        return acc;
+    }, {} as UserBookings);
+
+    const sortedPast = Object.keys(past)
+    .sort()
+    .reduce((acc: UserBookings, key) => {
+        acc[key] = past[key];
+        return acc;
+    }, {} as UserBookings);
+
+    return { upcoming: sortedUpcoming, past: sortedPast, tomorrow: tomorrowBookings };
+}
+
+
+export const formatIsoToWeekdayTime = (isoDate: string): string => {
+    const date = new Date(isoDate);
+
+    const options: Intl.DateTimeFormatOptions = { weekday: "long"};
+    const timeOptions: Intl.DateTimeFormatOptions = { hour: "numeric", minute: "2-digit", hour12: true }
+    const weekday = date.toLocaleString("en-US", options);
+    const time = date.toLocaleString("en-US", timeOptions);
+    return `${weekday} at ${time}`
 }

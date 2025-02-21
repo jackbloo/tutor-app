@@ -2,7 +2,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter }  from "next/navigation";
 import { useTutorDetailStore } from "@/store/tutorDetailStore";
-import { findClosestBooking, generateBookingTimes } from "@/utils";
+import { filterAvailableBookings, findClosestBooking, generateBookingTimes } from "@/utils";
+import { TimeSlotData, UserBookings } from "@/types";
 
 
 export default function useDetailPage(){
@@ -21,37 +22,29 @@ export default function useDetailPage(){
     const handleBookRightNow = async () => {
         try {
         const bookingTimes = generateBookingTimes()
-        const closestTime = findClosestBooking(bookingTimes)
-        if(!closestTime?.time || !closestTime?.category) return
-        const data = await localStorage.getItem('booking')
-        let latestData: { [key: string]: {
-            name?:string;
-            countryOfBirth?: string;
-            image?: string;
-            duration?: string;
-        } } = {}
+        const data = await localStorage.getItem('bookings')
+        const currentBookingTime = JSON.parse(data || '{}')
+        const availableBookings: Record<string, Record<string, Record<string, boolean>>> | TimeSlotData = filterAvailableBookings(bookingTimes, currentBookingTime, true)
+        const closestTime = findClosestBooking(availableBookings as Record<string, { '25': Record<string, unknown>; '50': Record<string, unknown>; }> )
+        if(!closestTime?.time || !closestTime?.category || !tutorDetail) return
+        let latestData: UserBookings = {};
+        const userNative = tutorDetail?.languageStacks?.find((el) => el.level === 'Native')?.language || ''
+        const userData = {
+            name: tutorDetail?.name,
+            countryOfBirth: tutorDetail?.countryOfBirth,
+            image: tutorDetail?.image,
+            duration: closestTime?.category,
+            language: userNative
+        }
         if(!data){
             if(!latestData[closestTime?.time as string]){
-                latestData[closestTime?.time] = {}
-            }
-            latestData[closestTime?.time] = {
-                name: tutorDetail?.name,
-                countryOfBirth: tutorDetail?.countryOfBirth,
-                image: tutorDetail?.image,
-                duration: closestTime?.category
+                latestData[closestTime?.time] = userData
             }
         }else{
-            const response = JSON.parse(data || '{}')
-            if(!latestData[closestTime?.time as string]){
-                latestData[closestTime?.time] = {}
-            }
             latestData = {
-                ...response,
+                ...currentBookingTime,
                 [closestTime?.time] : {
-                    name: tutorDetail?.name,
-                    countryOfBirth: tutorDetail?.countryOfBirth,
-                    image: tutorDetail?.image,
-                    duration: closestTime?.category
+                   ...userData
                 }
             }
         }
@@ -63,13 +56,18 @@ export default function useDetailPage(){
         await localStorage.setItem('bookings', stringifiedData)
         await localStorage.setItem('confirmation', confirmationData)
         push('/confirmation')
-        } catch {
+        } catch(error) {
+            console.log(error, 'error')
         return
         }
 
 
     }
 
-    return { tutorDetail, backToHome, isBookModalOpen, setIsBookModalOpen, handleBookRightNow}
+    const handleBookingLater = () => {
+        push(`/booking/${tutorDetail?.id}`)
+    }
+
+    return { tutorDetail, backToHome, isBookModalOpen, setIsBookModalOpen, handleBookRightNow, handleBookingLater}
 
 } 

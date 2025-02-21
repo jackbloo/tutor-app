@@ -13,7 +13,7 @@ import { MdOutlineQuickreply } from "react-icons/md";
 import { FaRegCalendarAlt } from "react-icons/fa";
 
 const Detail = () => {
-    const {tutorDetail, backToHome, isBookModalOpen, setIsBookModalOpen, handleBookRightNow} = useDetailPage()
+    const {tutorDetail, backToHome, isBookModalOpen, setIsBookModalOpen, handleBookRightNow, handleBookingLater} = useDetailPage()
     if(!tutorDetail) return null
     const {image, flag, name, reviews, price, description, lessons, languageStacks, countryOfBirth} = tutorDetail
   return (
@@ -197,7 +197,7 @@ const Detail = () => {
                     </div>
                 </div>
 
-                <div className='flex flex-col gap-1' style={{border: '2px solid #dedde5', padding: 16, borderRadius: 5}}>
+                <div className='flex flex-col gap-1' style={{border: '2px solid #dedde5', padding: 16, borderRadius: 5}} onClick={handleBookingLater}>
                     <div>
                     <FaRegCalendarAlt size={20} />
                     </div>
