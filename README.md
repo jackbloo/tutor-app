@@ -41,6 +41,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - Schedule: 
     - Assumption: Every Saturday there wont be any schedules to test the empty schedule
 - Book Tutor:
+    - Color will change to pink or enabled after user chose one schedule
     - Will check first if there are overlapping booking schedules, will show error if its overlapping
 
 ### Confirmation Page
