@@ -91,7 +91,7 @@ const BookingPage = () => {
                 </div>
             )}
             {currentData && !isLoading && Object.keys(currentData || {}).map((time) => {
-                if(!currentData || currentData[time]?.length < 1) return null
+                if(!currentData || !Array.isArray(currentData[time]) || currentData[time].length < 1) return null
                 return(
                     <div className="mt-2" key={time}>
                         <div className="flex flex-row gap-2 items-center">

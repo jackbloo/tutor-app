@@ -2,14 +2,13 @@
 
 import { useTutorScheduleStore } from "@/store/tutorScheduleStore"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 
 
 
 export default function useSchedulePage(){
     const {push} = useRouter()
     const handleToHome = () => push('/')
-    const [scheduleType, setScheduleType] = useState('upcoming')
     const getScheduleData = useTutorScheduleStore((store) => store.getScheduleData)
     const scheduleData = useTutorScheduleStore((store) => store.scheduleData)
     const isLoading = useTutorScheduleStore((store) => store.isLoading)
@@ -21,5 +20,5 @@ export default function useSchedulePage(){
       getScheduleData()
     },[])
 
-    return {  handleToHome, scheduleData, isTomorrowEmpty, isPastEmpty, isUpcomingEmpty, scheduleType, setScheduleType, isLoading }
+    return {  handleToHome, scheduleData, isTomorrowEmpty, isPastEmpty, isUpcomingEmpty, isLoading }
 } 

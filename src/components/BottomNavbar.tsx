@@ -21,7 +21,7 @@ const handleRoute = (route: string) => {
     push(route);
 }
   return (
-    <div className="fixed bottom-0 w-full bg-white shadow-lg py-2">
+    <div className="fixed bottom-0 left-0 w-full bg-white shadow-lg py-2">
       <div className="flex justify-around items-center">
         {
             menuBar.map((item) => {

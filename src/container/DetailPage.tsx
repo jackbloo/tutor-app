@@ -120,7 +120,7 @@ const Detail = () => {
         </div>
 
         {/* Languages Section */}
-        <div className="p-4" style={{borderTop: '1px solid #dedde5', borderBottom: '1px solid #dedde5', margin: '0px 16px'}}>
+        <div style={{borderTop: '1px solid #dedde5', borderBottom: '1px solid #dedde5', margin: '0px 16px', padding: '16px 0px'}}>
           <h3 className="text-lg font-semibold">I speak</h3>
           <div className="flex flex-col mt-2 gap-4">
             {languageStacks.map((language) => (

@@ -26,7 +26,7 @@ export default function RootLayout({
         className={`${poppins.variable} antialiased`}
       >
         <div className="w-full">
-          <div className="relative max-w-[500px] h-screen">
+          <div className="relative h-screen">
           {children}
           <Toaster position="bottom-center"/>
           </div>
