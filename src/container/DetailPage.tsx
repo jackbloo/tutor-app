@@ -48,8 +48,8 @@ const Detail = () => {
         </div>
         {/*Summary Section */}
         <div className="flex  justify-center gap-2" style={{borderTop: '1px solid #dedde5', borderBottom: '1px solid #dedde5', padding: '16px 16px', margin: '0px 16px'}}>
-            <div className='flex flex-col items-center gap-2'>
-                <div>
+            <div className='flex flex-col items-center justify-between gap-1'>
+                <div className='mt-1'>
                     <MdVerifiedUser size={30}/>
                 </div>
                 <div className='text-xs text-gray-500'>
