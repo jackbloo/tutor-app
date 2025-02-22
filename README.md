@@ -36,6 +36,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - Book Tutor:
     - Instant: Will book the earliest schedule
     - Later: Will redirect to booking page
+- Buttons:
+    - Some buttons will not be clickable only book tutor is clickable
 
 ### Booking Page
 - Schedule: 
@@ -51,8 +53,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ### Schedule Page
 - Empty:
     - When empty there will be text and button shown
-- Tomorrow:
-    - When there is tomorrow data, it will show and excluded from upcoming
+- Earliest:
+    - When there is earliest data, it will show and excluded from upcoming
 - Upcoming & Past:
     - Upcoming and past will have the same component but different sections
 
